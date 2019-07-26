@@ -85,11 +85,12 @@ export default {
           this.itens = response.data.data;
         }
       })
-      .catch(e => {
-      })
+      .catch(function (error) {
+        console.log(error);
+      });
     },
     editar(id) {
-      console.log("editar");
+    console.log("editar");
       console.log(id);
     },
     excluir(id) {

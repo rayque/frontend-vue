@@ -13,12 +13,10 @@ Vue.config.productionTip = false
 Vue.prototype.$http = axios
 Vue.prototype.$urlApi = 'http://api_pmz.local:8080/api/'
 
-
 Vue.use(BootstrapVue);
 
 new Vue({
   router,
   store,
-  BootstrapVue,
   render: h => h(App)
 }).$mount('#app')

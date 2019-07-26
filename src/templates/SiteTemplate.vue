@@ -1,7 +1,7 @@
 <template>
 <div>
     <b-navbar toggleable="lg" type="dark" variant="primary" style="height: 3.93em">
-        <b-navbar-brand href="#" class="title-brand"  > PMZ </b-navbar-brand>
+        <b-navbar-brand href="/" class="title-brand"  > PMZ </b-navbar-brand>
     </b-navbar>
 
     <b-container>
