@@ -9,7 +9,7 @@
                 <div class="header-sub-title"> Sistema TI </div> 
             </div>
             <div class="col-sm-6" style="margin-top:0.8em;" >
-                <router-link to="/cadastro" class="btn btn-outline-primary float-right"> Novo cadastro </router-link>
+                <router-link to="/cadastro" class="btn-pmz btn btn-outline-primary float-right"> Novo cadastro </router-link>
             </div>
         </div>
 
@@ -18,6 +18,15 @@
     <template v-slot:content>
 
         <card>
+          <b-alert
+            :show="true"
+            dismissible
+            fade
+            :variant="variant"
+          >
+            {{messageAlert}}
+          </b-alert>
+
           <b-table :items="itens" :fields="fields" hover responsive="sm">
               
             <template slot="status_usuario" slot-scope="row" >
@@ -28,8 +37,8 @@
             </template>
 
             <template slot="acoes" slot-scope="row" >
-              <b-button @click="editar(row.item.id)" size="sm" variant="outline-primary" class="mr-4">Editar</b-button>
-              <b-button @click="excluir(row.item.id)" size="sm" variant="outline-primary">Excluir</b-button>
+              <b-button @click="editar(row.item.id)" size="sm"  variant="outline-primary" class="mr-4 btn-pmz">Editar</b-button>
+              <b-button @click="destroy(row.item.id)" size="sm" variant="outline-primary" class="btn-pmz">Excluir</b-button>
             </template>
 
           </b-table>
@@ -90,16 +99,50 @@ export default {
       });
     },
     editar(id) {
-    console.log("editar");
-      console.log(id);
+      this.$store.commit('setusuarioId', id);
+      this.$router.push('/editar');
     },
-    excluir(id) {
-      console.log("excluir");
-      console.log(id);
+    destroy(id){
+      this.$http.post(this.$urlApi+'usuario/destroy', {
+        usuario_id: id,
+      })
+      .then(response => {  
+        this.dismissSecs = 5;
+        this.dismissCountDown = 0,
+        this.showDismissibleAlert = false;
+
+        if (response.data.success) {
+          this.$store.commit('setShowAlert', true);
+          this.$store.commit('setMessageAlert', response.data.message);
+          this.$store.commit('setVariant', 'success');
+          
+          this.getUsuarios();
+          this.$router.push('/');
+        } else {
+          this.variant = 'danger';
+          this.message = response.data.message;
+          this.showAlert = true;
+        }
+      })
+       .catch(function (error) {
+        console.log(error);
+   
+        this.variant = 'danger';
+        this.message = response.data.message;
+        this.showAlert = true;
+      })
     },
-    showButtons() {
-      console.log("foo");       
-    }
+  },
+  computed:{
+     showAlert(){
+       return this.$store.getters.showAlert;
+     }, 
+     messageAlert(){
+       return this.$store.getters.messageAlert;
+     }, 
+     variant(){
+       return this.$store.getters.variant;
+     } 
   }
 }
 </script>

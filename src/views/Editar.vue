@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="header-title">Sistema TI</div>      
-                <div class="header-sub-title">Novo Cadastro</div> 
+                <div class="header-sub-title">Editar Cadastro</div> 
             </div>
    
         </div>
@@ -190,8 +190,34 @@ export default {
   mounted: function() {
     this.getPerfis()
     this.getAparelhos()
+    this.getDadosUsuario();
   },
   methods: {
+    getDadosUsuario(){   
+      let usuarioId = this.$store.getters.usuarioId
+      
+      if(usuarioId) {
+        this.$http.get(this.$urlApi+'usuario/get-dados/'+usuarioId)
+          .then(response => {
+            
+            let status = response.data.success || null;
+            if(status) {
+              let data = response.data.data;
+
+              this.status_usuario = data.status_usuario  == 'I'? 'Inativo': 'Ativo';
+              this.nome_usuario = data.nome_usuario;
+              this.login = data.login;
+              this.email = data.email;
+              this.tempo_expiracao_senha = data.tempo_expiracao_senha;
+              this.cod_autorizacao = data.cod_autorizacao;
+              this.cod_pessoa = data.cod_pessoa;              
+            }
+        })
+      } else {
+          this.$router.push('/');
+      }
+      
+    },
     getPerfis() {
       this.$http.get(this.$urlApi+'perfil/listar-perfis')
       .then(response => {
@@ -212,7 +238,8 @@ export default {
     },
 
     store(){      
-      this.$http.post(this.$urlApi+'usuario/store', {
+      this.$http.post(this.$urlApi+'usuario/update', {
+        usuario_id: this.$store.getters.usuarioId,
         nome_usuario: this.nome_usuario,
         status_usuario: this.status_usuario,
         nome_usuario: this.nome_usuario,

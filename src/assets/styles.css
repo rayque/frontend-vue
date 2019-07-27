@@ -4,3 +4,12 @@
 .header-sub-title{
     font-size:1.4em; font-weight: 700; line-height:0.7em
 }
+.btn-pmz {
+    border-color:#1D334B;
+    color:#1D334B;
+}
+.btn-pmz:hover {
+    border-color:#1D334B;
+    background-color: #C4C4C4;
+    color: #4A4A4A;
+}

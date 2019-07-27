@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Cadastro from './views/Cadastro.vue'
+import Editar from './views/Editar.vue'
 
 Vue.use(Router)
 
@@ -18,6 +19,11 @@ export default new Router({
       path: '/cadastro',
       name: 'cadastro',
       component: Cadastro
+    },
+    {
+      path: '/editar',
+      name: 'editar',
+      component: Editar
     },
     // {
     //   path: '/about',
