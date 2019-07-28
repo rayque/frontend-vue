@@ -22,7 +22,7 @@
 
         <card>
           <b-alert
-            :show="true"
+            :show="showAlert"
             dismissible
             fade
             :variant="variant"
@@ -30,19 +30,24 @@
             {{messageAlert}}
           </b-alert>
 
-          <b-table :items="itens" :fields="fields" hover responsive="sm">
-            <template slot="status_usuario" slot-scope="row" >
-              <b-badge pill v-if="row.item.status_usuario == 'Ativo'" variant="success">&nbsp;</b-badge>
-              <b-badge pill v-else variant="danger">&nbsp;</b-badge> 
-              &nbsp;{{row.item.status_usuario}}
-            </template>
+      <div class="overflow-auto">
+        <b-table
+          id="tabela-usuarios"
+          :items="itens"
+          :per-page="perPage"
+          :current-page="currentPage"
+          small
+        ></b-table>
 
-            <template slot="acoes" slot-scope="row" >
-              <b-button @click="editar(row.item.id)" size="sm"  variant="outline-primary" class="mr-4 btn-pmz">Editar</b-button>
-              <b-button @click="destroy(row.item.id)" size="sm" variant="outline-primary" class="btn-pmz">Excluir</b-button>
-            </template>
+        <b-pagination
+          class="float-right"
+          v-model="currentPage"
+          :total-rows="rows"
+          :per-page="perPage"
+          aria-controls="tabela-usuarios"
+        ></b-pagination>
+      </div>
 
-          </b-table>
         </card>
 
     </template>
@@ -81,6 +86,8 @@ export default {
           },
         ],
         itens: [],
+        perPage: 10,
+        currentPage: 1,
       }
   },
   mounted: function() {
@@ -158,15 +165,18 @@ export default {
     }
   },
   computed:{
-     showAlert(){
-       return this.$store.getters.showAlert;
-     }, 
-     messageAlert(){
-       return this.$store.getters.messageAlert;
-     }, 
-     variant(){
-       return this.$store.getters.variant;
-     } 
+    showAlert(){
+      return this.$store.getters.showAlert;
+    }, 
+    messageAlert(){
+      return this.$store.getters.messageAlert;
+    }, 
+    variant(){
+      return this.$store.getters.variant;
+    }, 
+    rows() {
+    return this.itens.length
+    }
   }
 }
 </script>
