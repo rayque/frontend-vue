@@ -208,7 +208,7 @@ export default {
             
             let status = response.data.success || null;
             if(status) {
-              let data = response.data.data;
+              let data = response.data.data;              
 
               this.status_usuario = data.status_usuario  == 'I'? 'Inativo': 'Ativo';
               this.nome_usuario = data.nome_usuario;
@@ -216,7 +216,10 @@ export default {
               this.email = data.email;
               this.tempo_expiracao_senha = data.tempo_expiracao_senha;
               this.cod_autorizacao = data.cod_autorizacao;
-              this.cod_pessoa = data.cod_pessoa;              
+              this.cod_pessoa = data.cod_pessoa;
+              this.selected_perfil = data.perfis;
+              this.selected_aparelho = data.aparelhos;
+             
             }
         })
       } else {
@@ -244,6 +247,10 @@ export default {
     },
 
     store(){
+        console.log(this.selected_aparelho);
+        console.log(this.selected_perfil);
+        
+      
       this.$validator.validateAll().then(result => {
         if (result) {
         this.$http.post(this.$urlApi+'usuario/update', {
@@ -284,6 +291,8 @@ export default {
           this.message = response.data.message;
           this.showAlert = true;
         }) 
+
+
         }
       });
     
