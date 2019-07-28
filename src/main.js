@@ -11,9 +11,10 @@ import './assets/styles.css';
 
 Vue.config.productionTip = false
 Vue.prototype.$http = axios
-Vue.prototype.$urlApi = 'http://api_pmz.local:8080/api/'
+Vue.prototype.$urlApi = 'http://api_pmz.local/api/'
 
 Vue.use(BootstrapVue);
+
 
 new Vue({
   router,

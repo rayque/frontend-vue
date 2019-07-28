@@ -9,7 +9,10 @@
                 <div class="header-sub-title"> Sistema TI </div> 
             </div>
             <div class="col-sm-6" style="margin-top:0.8em;" >
-                <router-link to="/cadastro" class="btn-pmz btn btn-outline-primary float-right"> Novo cadastro </router-link>
+                  <b-button-group class="float-right">
+                    <b-button @click="relatorio()" size="sm" variant="outline-primary" class="btn-pmz">Relatório</b-button>
+                    <router-link to="/cadastro" class="btn-pmz btn btn-outline-primary"> Novo cadastro </router-link>
+                  </b-button-group>
             </div>
         </div>
 
@@ -28,9 +31,7 @@
           </b-alert>
 
           <b-table :items="itens" :fields="fields" hover responsive="sm">
-              
             <template slot="status_usuario" slot-scope="row" >
-            
               <b-badge pill v-if="row.item.status_usuario == 'Ativo'" variant="success">&nbsp;</b-badge>
               <b-badge pill v-else variant="danger">&nbsp;</b-badge> 
               &nbsp;{{row.item.status_usuario}}
@@ -132,6 +133,29 @@ export default {
         this.showAlert = true;
       })
     },
+    relatorio() {
+      this
+      .$http({
+        method: 'GET',
+        url: this.$urlApi+'usuario/relatorio',
+        responseType: 'blob'
+      })
+      .then(response => {
+        console.log(response);
+        
+        if (response.data.type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || response.data.type == 'application/pdf') {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `relatorio-usuarios.pdf`);
+            document.body.appendChild(link);
+            link.click();
+        } 
+      })
+      .catch(error => {
+        console.log(error);
+      })      
+    }
   },
   computed:{
      showAlert(){
