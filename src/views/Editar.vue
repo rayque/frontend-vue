@@ -31,21 +31,24 @@
             <div class="col-md-4">
               <div class="form-group">
                 <label for="nome_usuario">Nome:</label>
-                <input v-model="nome_usuario" type="text" class="form-control" id="nome_usuario" name="nome_usuario">
+                <input  v-validate="'required'" data-vv-as="Nome" v-model="nome_usuario" type="text" class="form-control" id="nome_usuario" name="nome_usuario">
+                 <div class="error">{{ errors.first('nome_usuario')}}</div>
               </div>
             </div>
 
             <div class="col-md-4">
               <div class="form-group">
                 <label for="login">Login:</label>
-                <input v-model="login"  type="text" class="form-control" id="login" name="login">
+                <input v-validate="'required'" data-vv-as="Login"  v-model="login"  type="text" class="form-control" id="login" name="login">
+                <div class="error">{{ errors.first('login')}}</div>
               </div>
             </div>
 
             <div class="col-md-4">
               <div class="form-group">
                 <label for="email">Email:</label>
-                <input v-model="email" type="email" class="form-control" id="email" name="email">
+                <input v-validate="'required|email'"  data-vv-as="Email"   v-model="email" type="email" class="form-control" id="email" name="email">
+                <div class="error">{{ errors.first('email')}}</div>
               </div>
             </div>
           </div>
@@ -55,21 +58,23 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="senha">Senha:</label>
-                  <input v-model="senha"  type="password" class="form-control" id="senha" name="senha">
+                  <input data-vv-as="Senha"  v-model="senha"  type="password" class="form-control" id="senha" name="senha">
                 </div>
               </div>
 
               <div class="col-md-3">
                 <div class="form-group">
                   <label for="tempo_expiracao_senha">Tempo Expiração da senha:</label>
-                  <input v-model="tempo_expiracao_senha" type="number" class="form-control" id="tempo_expiracao_senha" name="tempo_expiracao_senha">
+                  <input v-validate="'required|length:1'" data-vv-as="Tempo Expiração da senha"   v-model="tempo_expiracao_senha" type="number" class="form-control" id="tempo_expiracao_senha" name="tempo_expiracao_senha">
+                  <div class="error">{{ errors.first('tempo_expiracao_senha')}}</div>
                 </div>
               </div>
 
               <div class="col-md-3">
                 <div class="form-group">
-                  <label for="cod_autorizacao">Codigo de autorização:</label>
-                  <input  v-model="cod_autorizacao" type="text" class="form-control" id="cod_autorizacao" name="cod_autorizacao">
+                  <label  for="cod_autorizacao">Codigo de autorização:</label>
+                  <input v-validate="{ required: true, length:1 , regex: /^[a-zA-Z ]*$/}"  data-vv-as="Codigo de autorização"  v-model="cod_autorizacao" type="text" class="form-control" id="cod_autorizacao" name="cod_autorizacao">
+                  <div class="error">{{ errors.first('cod_autorizacao')}}</div>
                 </div>
               </div>
 
@@ -92,8 +97,9 @@
           <div class="row">
             <div class="col-md-4">
               <div class="form-group">
-                <label for="cod_pessoa">Cod Pessoa:</label>
-                <input  v-model="cod_pessoa" type="number" class="form-control" id="cod_pessoa" name="cod_pessoa">
+                <label for="cod_pessoa">Cod. Pessoa:</label>
+              <input v-validate="'required'" data-vv-as="Cod. Pessoa"  v-model="cod_pessoa" type="number" class="form-control" id="cod_pessoa" name="cod_pessoa">
+                <div class="error">{{ errors.first('cod_pessoa')}}</div>
               </div>
             </div>
 
@@ -237,45 +243,51 @@ export default {
       })
     },
 
-    store(){      
-      this.$http.post(this.$urlApi+'usuario/update', {
-        usuario_id: this.$store.getters.usuarioId,
-        nome_usuario: this.nome_usuario,
-        status_usuario: this.status_usuario,
-        nome_usuario: this.nome_usuario,
-        login: this.login,
-        email: this.email,
-        senha: this.senha,
-        tempo_expiracao_senha: this.tempo_expiracao_senha,
-        cod_autorizacao: this.cod_autorizacao,
-        cod_pessoa: this.cod_pessoa,
-        selected_aparelho: this.selected_aparelho,
-        selected_perfil: this.selected_perfil,
-      })
-      .then(response => {  
-        this.dismissSecs = 5;
-        this.dismissCountDown = 0,
-        this.showDismissibleAlert = false;
+    store(){
+      this.$validator.validateAll().then(result => {
+        if (result) {
+        this.$http.post(this.$urlApi+'usuario/update', {
+          usuario_id: this.$store.getters.usuarioId,
+          nome_usuario: this.nome_usuario,
+          status_usuario: this.status_usuario,
+          nome_usuario: this.nome_usuario,
+          login: this.login,
+          email: this.email,
+          senha: this.senha,
+          tempo_expiracao_senha: this.tempo_expiracao_senha,
+          cod_autorizacao: this.cod_autorizacao,
+          cod_pessoa: this.cod_pessoa,
+          selected_aparelho: this.selected_aparelho,
+          selected_perfil: this.selected_perfil,
+        })
+        .then(response => {  
+          this.dismissSecs = 5;
+          this.dismissCountDown = 0,
+          this.showDismissibleAlert = false;
 
-        if (response.data.success) {
-          this.$store.commit('setShowAlert', true);
-          this.$store.commit('setMessageAlert', response.data.message);
-          this.$store.commit('setVariant', 'success');
-          
-          this.$router.push('/');
-        } else {
+          if (response.data.success) {
+            this.$store.commit('setShowAlert', true);
+            this.$store.commit('setMessageAlert', response.data.message);
+            this.$store.commit('setVariant', 'success');
+            
+            this.$router.push('/');
+          } else {
+            this.variant = 'danger';
+            this.message = response.data.message;
+            this.showAlert = true;
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+    
           this.variant = 'danger';
           this.message = response.data.message;
           this.showAlert = true;
+        }) 
         }
-      })
-       .catch(function (error) {
-        console.log(error);
-   
-        this.variant = 'danger';
-        this.message = response.data.message;
-        this.showAlert = true;
-      })
+      });
+    
+
     }
   }
 }

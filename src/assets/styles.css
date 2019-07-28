@@ -13,3 +13,7 @@
     background-color: #C4C4C4;
     color: #4A4A4A;
 }
+div.error {
+    color: #F03C3C;
+    font-size: 0.9em;
+}
